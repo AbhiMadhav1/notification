@@ -1,65 +1,51 @@
 import messaging from '@react-native-firebase/messaging';
 import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
+import RootNavigator from './src/navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const App = () => {
-  const [fcmToken, setFcmToken] = useState(null);
-
-  const requestUserPermission = async () => {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-      getFCMToken();
-    } else {
-      console.log('User has not granted notification permission');
-    }
-  };
-
-  const getFCMToken = async () => {
-    try {
-      const token = await messaging().getToken();
-      if (token) {
-        console.log('FCM Token:', token);
-        setFcmToken(token);
-      }
-    } catch (error) {
-      console.log('Error getting FCM token:', error);
-    }
-  };
-
-  useEffect(() => {
-    requestUserPermission();
+  React.useEffect (() => {
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background!', remoteMessage);
+      console.log('Message handled in the background!', JSON.stringify(remoteMessage));
+      PushNotification.localNotification({
+        channelId: 'default-channel-id',
+        title: remoteMessage.notification.title,
+        message: remoteMessage.notification.body,
+      });
     });
     
-
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      const { notification, data } = remoteMessage;
-      const notificationTitle = notification?.title || 'No Title';
-      const notificationBody = notification?.body || 'No Body';
-
-      Alert.alert(
-        'Notification',
-        `Title: ${notificationTitle}\nBody: ${notificationBody}`,
-      );
-
-      console.log('Message handled in the foreground!', remoteMessage);
+    const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+    console.log('Foreground message:' , remoteMessage);
+    PushNotification.localNotification({
+      channelId: 'default-channel-id',
+      title: remoteMessage.notification.title,
+      message: remoteMessage.notification.body,
     });
-
-    return unsubscribe;
-  }, []);
-
+      });
+    
+    const unsubscribeOnNotificationOpenApp = messaging().onNotificationOpenedApp(async remoteMessage => {
+      console.log('App opened by notification while in foreground:',remoteMessage);
+    
+    });
+    
+    messaging().getInitialNotification(async remoteMessage => {
+      console.log('App opened by notification from closed state:',remoteMessage);
+    
+    });
+    
+    return () => {
+      unsubscribeOnMessage();
+      unsubscribeOnNotificationOpenApp();
+    };
+      },[]);
+    
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Notification</Text>
-      {/* <Text style={styles.tokenText}>FCM Token: {fcmToken ? fcmToken : 'Fetching token...'}</Text> */}
-    </View>
+    <SafeAreaView style={styles.container}>
+      {/* <RootNavigator /> */}
+      <Text>Notification</Text>
+    </SafeAreaView>
   );
 };
 
