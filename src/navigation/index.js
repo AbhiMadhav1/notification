@@ -1,9 +1,13 @@
 import React from 'react';
-import {HomeScreen} from '../screens/HomeScreen';
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
 
-const Stack = createStackNavigator();
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Notification from '../screens/Notification';
+import RegisterScreen from '../screens/RegisterScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import { HomeScreen } from '../screens/HomeScreen';
+
+const Stack = createNativeStackNavigator();
 
 const RootNavigator = ({}) => {
   return (
@@ -12,8 +16,14 @@ const RootNavigator = ({}) => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName={'Home'}>
+        initialRouteName={'Register'}>
+        <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Notification" component={Notification} />
+      
+        
+
       </Stack.Navigator>
     </NavigationContainer>
   );

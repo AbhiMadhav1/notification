@@ -1,15 +1,6 @@
-import { Linking, Alert, Platform } from "react-native";
-
-
-export openSettings = () => {
-    Linking.openSettings().catch(() => {
-        Alert.alert("Unable to open settings");
-    })
-}
+import {Platform } from "react-native";
 
 export const checkPermissions = () => {
-    if (Platform.OS === 'android') {
-        
-        openSettings();
-    }
+    if (Platform.OS === 'android') 
+    
 };
