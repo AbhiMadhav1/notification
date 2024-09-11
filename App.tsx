@@ -4,8 +4,8 @@ import {Alert, StyleSheet, Text, View} from 'react-native';
 import RootNavigator from './src/navigation';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import PushNotification from 'react-native-push-notification';
-import { store } from './src/store';
 import { Provider } from 'react-redux';
+import store from './src/store';
 const App = () => {
   React.useEffect(() => {
     messaging().setBackgroundMessageHandler(async remoteMessage => {
