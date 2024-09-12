@@ -13,6 +13,7 @@ import {addItem, removeItem} from '../actions';
 
 export const HomeScreen = () => {
   const data = useSelector(state => state.data);
+  const user = useSelector(state => state.user);
   const dispatch = useDispatch();
 
   const [newItemTitle, setNewItemTitle] = useState('');
@@ -57,6 +58,7 @@ export const HomeScreen = () => {
           onPress={handleRemovePress}>
           <Text style={styles.ButtonText}>Remove</Text>
         </TouchableOpacity>
+        
       </View>
       <FlatList
         data={data}

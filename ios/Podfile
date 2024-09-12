@@ -30,6 +30,7 @@ use_frameworks! :linkage => :static
   pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseCore', :modular_headers => true
   pod 'Firebase/Messaging'
+  pod 'Firebase/Firestore'
 
   target 'notificationTests' do
     inherit! :complete

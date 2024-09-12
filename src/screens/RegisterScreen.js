@@ -13,6 +13,7 @@ import {
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import {setUser} from '../reducers/userReducer';
 import {useDispatch} from 'react-redux';
+import { auth } from '../../firebase';
 
 const RegisterScreen = () => {
   const [name, setName] = useState('');
@@ -24,16 +25,32 @@ const RegisterScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (name && email && password) {
-      dispatch(setUser({name, email, mobile, profileImage}));
-      setName('');
-      setEmail('');
-      setPassword('');
-      setMobile('');
-      setProfileImage(null);
+      try {
+        // Create user in Firebase
+        const userCredential = await auth().createUserWithEmailAndPassword(
+          email,
+          password
+        );
+        const user = userCredential.user;
 
-      navigation.navigate('Profile');
+        dispatch(setUser({name, email, mobile, profileImage}));
+
+        // Clear form fields
+        setName('');
+        setEmail('');
+        setPassword('');
+        setMobile('');
+        setProfileImage(null);
+
+        navigation.replace('MainTabs');
+        Alert.alert('Success', 'User registered successfully!');
+      } catch (error) {
+        Alert.alert('Registration Error', error.message);
+      }
+    } else {
+      Alert.alert('Error', 'Please fill out all required fields.');
     }
   };
 
@@ -135,7 +152,9 @@ const RegisterScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
-
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.loginText}>Already have an account? Login</Text>
+      </TouchableOpacity>
       {/* Modal for image options */}
       <Modal
         visible={modalVisible}
@@ -284,6 +303,12 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     marginRight: 10,
+  },
+  loginText: {
+    marginTop: 20,
+    textAlign: 'center',
+    color: '#007AFF',
+    fontSize: 16,
   },
 });
 

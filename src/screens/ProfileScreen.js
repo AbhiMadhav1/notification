@@ -11,7 +11,7 @@ const ProfileScreen = () => {
 
   const onLogout = () => {
     dispatch(logout());
-    navigation.navigate('Register');
+    navigation.navigate('Login');
   };
 
   return (
@@ -88,9 +88,9 @@ const styles = StyleSheet.create({
     right: 10, 
     padding: 10, 
   },
-  logoutIcon: {
-    width: 30, 
-    height: 30,
+  logoutIcon: { 
+    width: 24, 
+    height: 24,
   },
 });
 
