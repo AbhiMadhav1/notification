@@ -1,13 +1,13 @@
 import React from 'react';
-import {Image, StyleSheet} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { Image } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Notification from '../screens/Notification';
 import RegisterScreen from '../screens/RegisterScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import {HomeScreen} from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,7 +46,7 @@ const MainTabs = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               source={homeIcon}
               style={{
@@ -62,7 +62,7 @@ const MainTabs = () => {
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               source={profileIcon}
               style={{
@@ -86,10 +86,10 @@ const RootNavigator = () => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="Login">
+        initialRouteName="MainTabs">
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="MainTabs" component={MainTabs} />
-        <Stack.Screen name="Notification" component={Notification} />
+        {/* <Stack.Screen name="Notification" component={Notification} /> */}
         <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Navigator>
     </NavigationContainer>

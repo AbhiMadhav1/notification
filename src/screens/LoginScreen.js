@@ -1,74 +1,82 @@
-import React, {useState} from 'react';
-import {
-  View,
-  TextInput,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import auth from '@react-native-firebase/auth';
-import {useDispatch} from 'react-redux';
-import {setUser} from '../reducers/userReducer';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, AppState } from 'react-native';
+import PushNotification from 'react-native-push-notification';
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigation = useNavigation();
-  const dispatch = useDispatch();
+// Configure push notifications
+PushNotification.configure({
+  onNotification: function (notification) {
+    console.log('Notification received:', notification);
+    notification.finish(PushNotification.FetchResult.NoData);
+  },
+  requestPermissions: true,
+  popInitialNotification: true,
+});
 
-  const handleLogin = async () => {
-    if (email && password) {
-      try {
-        const userCredential = await auth().signInWithEmailAndPassword(
-          email,
-          password,
-        );
-        const user = userCredential.user;
+// Create a channel for Android notifications
+PushNotification.createChannel(
+  {
+    channelId: 'default-channel-id',
+    channelName: 'Default Channel',
+    channelDescription: 'A channel for default notifications',
+    soundName: 'default',
+    importance: PushNotification.Importance.HIGH,
+    vibrate: true,
+  },
+  created => console.log(`Channel created: ${created}`),
+);
 
-        const userData = {
-          name: user.name,
-          email: user.email,
-          mobile: '',
-          profileImage: '',
-        };
-
-        dispatch(setUser(userData));
-        navigation.replace('MainTabs');
-        Alert.alert('Success', 'User Login successfully!');
-      } catch (error) {
-        Alert.alert('Login Error', error.message);
-      }
-    } else {
-      Alert.alert('Error', 'Please enter your email and password.');
-    }
+const App = () => {
+  const handleImmediateNotification = () => {
+    PushNotification.localNotification({
+      channelId: 'default-channel-id',
+      title: 'Immediate Notification',
+      message: 'This is an immediate notification!',
+    });
   };
+
+  const handleScheduledNotification = () => {
+    PushNotification.localNotificationSchedule({
+      channelId: 'default-channel-id',
+      title: 'Scheduled Notification',
+      message: 'This notification will appear in 5 seconds!',
+      date: new Date(Date.now() + 5 * 1000), // 5 seconds from now
+      allowWhileIdle: true,
+    });
+    console.log('Scheduled notification for 5 seconds later.');
+  };
+
+  useEffect(() => {
+    // Schedule a notification when the app goes to the background
+    const handleAppStateChange = nextAppState => {
+      if (nextAppState === 'background') {
+        PushNotification.localNotification({
+          channelId: 'default-channel-id',
+          title: 'App in Background',
+          message: 'The app is running in the background!',
+        });
+      }
+    };
+
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+
+    return () => subscription.remove();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleImmediateNotification}>
+        <Text style={styles.buttonText}>Immediate Notification</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.linkText}>Don't have an account? Register</Text>
-      </TouchableOpacity>
+      {/* <TouchableOpacity
+        style={styles.button}
+        onPress={handleScheduledNotification}>
+        <Text style={styles.buttonText}>Schedule Notification (5s)</Text>
+      </TouchableOpacity> */}
     </View>
   );
 };
@@ -77,38 +85,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    marginBottom: 15,
-    paddingHorizontal: 10,
-    borderRadius: 8,
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 16,
   },
   button: {
-    backgroundColor: 'blue',
-    paddingVertical: 15,
+    backgroundColor: 'green',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 8,
-    alignItems: 'center',
+    marginVertical: 10,
   },
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
     fontSize: 16,
-  },
-  linkText: {
-    color: 'blue',
-    textAlign: 'center',
-    marginTop: 20,
+    fontWeight: 'bold',
   },
 });
 
-export default LoginScreen;
+export default App;

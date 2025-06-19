@@ -3,6 +3,16 @@
 <plist version="1.0">
 <dict>
 <key>NSCameraUsageDescription</key>
+<string>We need access to your camera for...</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>We need access to your microphone for...</string>
+<key>NSLocalNotificationUsageDescription</key>
+<string>We need to send you notifications.</string>
+<key>NSCameraUsageDescription</key>
+<string>This is for Camera permission</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>This is for Mic permission</string>
+<key>NSCameraUsageDescription</key>
 <string>We need access to your camera for taking photos.</string>
 <key>NSPhotoLibraryUsageDescription</key>
 <string>We need access to your photo library for uploading photos.</string>

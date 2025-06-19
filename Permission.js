@@ -1,6 +1,6 @@
-import {Platform } from "react-native";
+// import {Platform } from "react-native";
 
-export const checkPermissions = () => {
-    if (Platform.OS === 'android') 
+// export const checkPermissions = () => {
+//     if (Platform.OS === 'android') 
     
-};
+// };
